@@ -1,14 +1,16 @@
 import React from 'react'
 import { Outlet } from 'react-router-dom'
 
-import { Header } from '../components'
+import { Header } from '../../components'
+
+import { LayoutContainer } from './styles'
 
 const Default: React.FC = () => {
   return (
-    <div>
+    <LayoutContainer>
       <Header />
       <Outlet />
-    </div>
+    </LayoutContainer>
   )
 }
 
