@@ -1,7 +1,15 @@
 import React from 'react'
 
 import { Play } from 'phosphor-react'
-import { CountDown, FormContainer, HomeContainer, Separetor } from './styles'
+import {
+  CountDown,
+  FormContainer,
+  HomeContainer,
+  MinutesAmountInput,
+  Separetor,
+  StartCountDownButton,
+  TaskInput,
+} from './styles'
 
 const Home: React.FC = () => {
   return (
@@ -9,10 +17,18 @@ const Home: React.FC = () => {
       <form action="">
         <FormContainer>
           <label htmlFor="task">Vou trabalhar em</label>
-          <input id="task" type="text" />
+          <TaskInput
+            id="task"
+            type="text"
+            placeholder="Dê um nome para o seu projeto"
+          />
 
           <label htmlFor="minutesAmount">durante</label>
-          <input id="minutesAmount" type="number" />
+          <MinutesAmountInput
+            id="minutesAmount"
+            type="number"
+            placeholder="00"
+          />
 
           <span>minutos.</span>
         </FormContainer>
@@ -25,10 +41,10 @@ const Home: React.FC = () => {
           <span>0</span>
         </CountDown>
 
-        <button type="submit">
+        <StartCountDownButton type="submit" disabled>
           <Play size={24} />
           Começar
-        </button>
+        </StartCountDownButton>
       </form>
     </HomeContainer>
   )
