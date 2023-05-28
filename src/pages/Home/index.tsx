@@ -37,24 +37,15 @@ const Home: React.FC = () => {
     },
   })
 
-  const activeCycle = cycles.find((cycle) => cycle.id === activeCycleId)
-
-  useEffect(() => {
-    if (activeCycle) {
-      setInterval(() => {
-        setAmountSecondsPasses(
-          differenceInSeconds(new Date(), activeCycle.startDate),
-        )
-      }, 1000)
-    }
-  }, [activeCycle])
-
   function handleCreateNewCycle(data: NewCycleFormData) {
     const id = new Date().getTime().toString()
     setCycles((state) => [...state, { ...data, id, startDate: new Date() }])
     setActiveCycleId(id)
+    setAmountSecondsPasses(0)
     reset()
   }
+
+  const activeCycle = cycles.find((cycle) => cycle.id === activeCycleId)
 
   const totalSeconds = activeCycle ? activeCycle.minutesAmount * 60 : 0
   const currentSeconds = activeCycle ? totalSeconds - amountSecondsPasses : 0
@@ -67,6 +58,28 @@ const Home: React.FC = () => {
 
   const task = watch('task')
   const isSubmitDisabled = !task
+
+  useEffect(() => {
+    let interval: number
+
+    if (activeCycle) {
+      interval = setInterval(() => {
+        setAmountSecondsPasses(
+          differenceInSeconds(new Date(), activeCycle.startDate),
+        )
+      }, 1000)
+    }
+
+    return () => {
+      clearInterval(interval)
+    }
+  }, [activeCycle])
+
+  useEffect(() => {
+    if (activeCycle) {
+      document.title = `${activeCycle.task} - ${minutes}:${seconds}`
+    }
+  }, [activeCycle, minutes, seconds])
 
   return (
     <HomeContainer>
