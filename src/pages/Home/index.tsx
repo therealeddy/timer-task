@@ -4,8 +4,9 @@ import { HandPalm, Play } from 'phosphor-react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { differenceInSeconds } from 'date-fns'
+import * as zod from 'zod'
 
-import { Cycle, NewCycleFormData, newCycleFormValidationSchema } from './schema'
+import { setDocumentTitle } from '../../utils/documentTitle'
 
 import {
   CountDown,
@@ -17,7 +18,25 @@ import {
   StopCountDownButton,
   TaskInput,
 } from './styles'
-import { setDocumentTitle } from '../../utils/documentTitle'
+
+const newCycleFormValidationSchema = zod.object({
+  task: zod.string().min(1, 'Informe a tarefa'),
+  minutesAmount: zod
+    .number()
+    .min(5, 'O ciclo precisa ser de no mínimo 5 minutos.')
+    .max(60, 'O intervalo precisa ser de no máximo 60 minutos.'),
+})
+
+type NewCycleFormData = zod.infer<typeof newCycleFormValidationSchema>
+
+interface Cycle {
+  id: string
+  task: string
+  minutesAmount: number
+  startDate: Date
+  interruptedDate?: Date
+  finishedDate?: Date
+}
 
 const Home: React.FC = () => {
   const [cycles, setCycles] = useState<Cycle[]>([])
