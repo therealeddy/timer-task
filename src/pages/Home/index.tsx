@@ -25,6 +25,7 @@ interface Cycle {
 const Home: React.FC = () => {
   const [cycles, setCycles] = useState<Cycle[]>([])
   const [activeCycleId, setActiveCycleId] = useState<string | null>(null)
+  const [amountSecondsPasses, setAmountSecondsPasses] = useState(0)
 
   const { register, handleSubmit, watch, reset } = useForm<NewCycleFormData>({
     resolver: zodResolver(newCycleFormValidationSchema),
@@ -42,6 +43,15 @@ const Home: React.FC = () => {
   }
 
   const activeCycle = cycles.find((cycle) => cycle.id === activeCycleId)
+
+  const totalSeconds = activeCycle ? activeCycle.minutesAmount * 60 : 0
+  const currentSeconds = activeCycle ? totalSeconds - amountSecondsPasses : 0
+
+  const minutesAmount = Math.floor(currentSeconds / 60)
+  const secondsAmount = currentSeconds % 60
+
+  const minutes = String(minutesAmount).padStart(2, '0')
+  const seconds = String(secondsAmount).padStart(2, '0')
 
   const task = watch('task')
   const isSubmitDisabled = !task
@@ -81,11 +91,11 @@ const Home: React.FC = () => {
         </FormContainer>
 
         <CountDown>
-          <span>0</span>
-          <span>0</span>
+          <span>{minutes[0]}</span>
+          <span>{minutes[1]}</span>
           <Separetor>:</Separetor>
-          <span>0</span>
-          <span>0</span>
+          <span>{seconds[0]}</span>
+          <span>{seconds[1]}</span>
         </CountDown>
 
         <StartCountDownButton disabled={isSubmitDisabled} type="submit">
