@@ -6,7 +6,14 @@ export default defineConfig({
   plugins: [react()],
   build: {
     rollupOptions: {
-      external: ['react-is'],
+      external: ['react', 'react-dom', 'styled-components'],
+      output: {
+        globals: {
+          react: 'React',
+          'react-dom': 'ReactDOM',
+          'styled-components': 'styled',
+        },
+      },
     },
   },
   server: {
