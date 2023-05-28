@@ -1,6 +1,6 @@
 import React from 'react'
 import { Routes, Route } from 'react-router-dom'
-import { Home } from '../pages'
+import { Home, History } from '../pages'
 
 import Default from '../layouts/Default'
 
@@ -9,7 +9,7 @@ const Router: React.FC = () => {
     <Routes>
       <Route path="/" element={<Default />}>
         <Route path="/" element={<Home />} />
-        {/* <Route path="/history" element={<History />} /> */}
+        <Route path="/history" element={<History />} />
       </Route>
     </Routes>
   )
