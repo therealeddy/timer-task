@@ -74,16 +74,35 @@ const Home: React.FC = () => {
 
     if (activeCycle) {
       interval = setInterval(() => {
-        setAmountSecondsPasses(
-          differenceInSeconds(new Date(), activeCycle.startDate),
+        const secondsDifference = differenceInSeconds(
+          new Date(),
+          activeCycle.startDate,
         )
+
+        if (secondsDifference >= totalSeconds) {
+          setCycles((state) =>
+            state.map((cycle) => {
+              if (cycle.id === activeCycleId) {
+                return { ...cycle, finishedDate: new Date() }
+              }
+
+              return cycle
+            }),
+          )
+
+          setDocumentTitle('', true)
+          setAmountSecondsPasses(totalSeconds)
+          clearInterval(interval)
+        } else {
+          setAmountSecondsPasses(secondsDifference)
+        }
       }, 1000)
     }
 
     return () => {
       clearInterval(interval)
     }
-  }, [activeCycle])
+  }, [activeCycle, activeCycleId, totalSeconds])
 
   useEffect(() => {
     if (activeCycle) {
