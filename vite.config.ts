@@ -3,23 +3,7 @@ import react from '@vitejs/plugin-react'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [
-    react({
-      babel: {
-        plugins: [
-          [
-            'babel-plugin-styled-components',
-            {
-              ssr: false,
-              pure: true,
-              displayName: true,
-              fileName: false,
-            },
-          ],
-        ],
-      },
-    }),
-  ],
+  plugins: [react()],
   server: {
     port: 3000,
   },
