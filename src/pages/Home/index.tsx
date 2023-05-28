@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react'
 
-import { Play } from 'phosphor-react'
+import { HandPalm, Play } from 'phosphor-react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { differenceInSeconds } from 'date-fns'
 
-import { NewCycleFormData, newCycleFormValidationSchema } from './schema'
+import { Cycle, NewCycleFormData, newCycleFormValidationSchema } from './schema'
 
 import {
   CountDown,
@@ -14,15 +14,10 @@ import {
   MinutesAmountInput,
   Separetor,
   StartCountDownButton,
+  StopCountDownButton,
   TaskInput,
 } from './styles'
-
-interface Cycle {
-  id: string
-  task: string
-  minutesAmount: number
-  startDate: Date
-}
+import { setDocumentTitle } from '../../utils/documentTitle'
 
 const Home: React.FC = () => {
   const [cycles, setCycles] = useState<Cycle[]>([])
@@ -43,6 +38,21 @@ const Home: React.FC = () => {
     setActiveCycleId(id)
     setAmountSecondsPasses(0)
     reset()
+  }
+
+  function handleInterruptCycle() {
+    setActiveCycleId(null)
+    setDocumentTitle('', true)
+
+    setCycles((state) =>
+      state.map((cycle) => {
+        if (cycle.id === activeCycleId) {
+          return { ...cycle, interruptedDate: new Date() }
+        }
+
+        return cycle
+      }),
+    )
   }
 
   const activeCycle = cycles.find((cycle) => cycle.id === activeCycleId)
@@ -77,7 +87,7 @@ const Home: React.FC = () => {
 
   useEffect(() => {
     if (activeCycle) {
-      document.title = `${activeCycle.task} - ${minutes}:${seconds}`
+      setDocumentTitle(`${activeCycle.task} - ${minutes}:${seconds}`)
     }
   }, [activeCycle, minutes, seconds])
 
@@ -92,6 +102,7 @@ const Home: React.FC = () => {
             list="task-suggestions"
             type="text"
             placeholder="Dê um nome para o seu projeto"
+            disabled={!!activeCycle}
           />
 
           <datalist id="task-suggestions">
@@ -110,6 +121,7 @@ const Home: React.FC = () => {
             step={5}
             min={5}
             max={60}
+            disabled={!!activeCycle}
           />
 
           <span>minutos.</span>
@@ -123,10 +135,17 @@ const Home: React.FC = () => {
           <span>{seconds[1]}</span>
         </CountDown>
 
-        <StartCountDownButton disabled={isSubmitDisabled} type="submit">
-          <Play size={24} />
-          Começar
-        </StartCountDownButton>
+        {activeCycle ? (
+          <StopCountDownButton onClick={handleInterruptCycle} type="button">
+            <HandPalm size={24} />
+            Interromper
+          </StopCountDownButton>
+        ) : (
+          <StartCountDownButton disabled={isSubmitDisabled} type="submit">
+            <Play size={24} />
+            Começar
+          </StartCountDownButton>
+        )}
       </form>
     </HomeContainer>
   )
