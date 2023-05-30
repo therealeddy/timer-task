@@ -2,9 +2,9 @@ import React, { useContext, useEffect } from 'react'
 import { differenceInSeconds } from 'date-fns'
 
 import { setDocumentTitle } from '../../../../utils/documentTitle'
+import { CyclesContext } from '../../../../contexts/CyclesContext'
 
 import { CountDownContainer, Separetor } from './styles'
-import { CyclesContext } from '../..'
 
 const CountDown: React.FC = () => {
   const {

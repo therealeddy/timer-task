@@ -1,11 +1,15 @@
 import React from 'react'
 
 import { HistoryContainer, HistoryList, Status } from './styles'
+// import { CyclesContext } from '../../contexts/CyclesContext'
 
 const History: React.FC = () => {
+  // const { cycles } = useContext(CyclesContext)
+
   return (
     <HistoryContainer>
       <h1>Meu histórico</h1>
+
       <HistoryList>
         <table>
           <thead>
