@@ -5,13 +5,17 @@ import { BrowserRouter } from 'react-router-dom'
 import { defaultTheme } from './styles/theme/default'
 import { Analytics } from '@vercel/analytics/react'
 
+import { CyclesContextProvider } from './contexts/CyclesContext'
+
 import Router from './routes'
 
 function App() {
   return (
     <ThemeProvider theme={defaultTheme}>
       <BrowserRouter>
-        <Router />
+        <CyclesContextProvider>
+          <Router />
+        </CyclesContextProvider>
       </BrowserRouter>
       <GlobalStyle />
       <Analytics />
