@@ -1,18 +1,22 @@
-import React, { createContext, useState } from 'react'
-import { setDocumentTitle } from '../utils/documentTitle'
+import React, { createContext, useEffect, useState } from 'react'
+import { differenceInSeconds } from 'date-fns'
+
+import useCyclesReducer from '../reducers/cycles/reducer'
+
+import {
+  addNewCycleAction,
+  interruptedCurrentCycleAction,
+  markCurrentCycleAsFinishedAction,
+} from '../reducers/cycles/actions'
+
+import { Cycle } from '../reducers/cycles/types'
+
+import { writeLocalStorage } from '../../utils/localStorage'
+import { setDocumentTitle } from '../../utils/documentTitle'
 
 interface CreateCycleData {
   task: string
   minutesAmount: number
-}
-
-interface Cycle {
-  id: string
-  task: string
-  minutesAmount: number
-  startDate: Date
-  interruptedDate?: Date
-  finishedDate?: Date
 }
 
 interface CyclesContextType {
@@ -21,9 +25,9 @@ interface CyclesContextType {
   activeCycleId: string | null
   amountSecondsPasses: number
   markCurrentCycleAsFinished: () => void
-  setSecondsPassed: (seconds: number) => void
   createNewCycle: (data: CreateCycleData) => void
   interruptCurrentCycle: () => void
+  setSecondsPassed: (seconds: number) => void
 }
 
 export const CyclesContext = createContext({} as CyclesContextType)
@@ -35,49 +39,48 @@ interface CyclesContextProviderProps {
 export function CyclesContextProvider({
   children,
 }: CyclesContextProviderProps) {
-  const [cycles, setCycles] = useState<Cycle[]>([])
-  const [activeCycleId, setActiveCycleId] = useState<string | null>(null)
-  const [amountSecondsPasses, setAmountSecondsPasses] = useState(0)
+  const { cyclesState, dispatch } = useCyclesReducer()
+
+  const { cycles, activeCycleId } = cyclesState
 
   const activeCycle = cycles.find((cycle) => cycle.id === activeCycleId)
+
+  const [amountSecondsPasses, setAmountSecondsPasses] = useState(() => {
+    if (activeCycle) {
+      return differenceInSeconds(new Date(), new Date(activeCycle.startDate))
+    }
+
+    return 0
+  })
 
   function setSecondsPassed(seconds: number) {
     setAmountSecondsPasses(seconds)
   }
 
   function markCurrentCycleAsFinished() {
-    setCycles((state) =>
-      state.map((cycle) => {
-        if (cycle.id === activeCycleId) {
-          return { ...cycle, finishedDate: new Date() }
-        }
-
-        return cycle
-      }),
-    )
+    dispatch(markCurrentCycleAsFinishedAction())
   }
 
   function createNewCycle(data: CreateCycleData) {
-    const id = new Date().getTime().toString()
-    setCycles((state) => [...state, { ...data, id, startDate: new Date() }])
-    setActiveCycleId(id)
+    dispatch(
+      addNewCycleAction({
+        ...data,
+        id: new Date().getTime().toString(),
+        startDate: new Date(),
+      }),
+    )
+
     setAmountSecondsPasses(0)
   }
 
   function interruptCurrentCycle() {
-    setActiveCycleId(null)
     setDocumentTitle('', true)
-
-    setCycles((state) =>
-      state.map((cycle) => {
-        if (cycle.id === activeCycleId) {
-          return { ...cycle, interruptedDate: new Date() }
-        }
-
-        return cycle
-      }),
-    )
+    dispatch(interruptedCurrentCycleAction())
   }
+
+  useEffect(() => {
+    writeLocalStorage('cycles-state', cyclesState)
+  }, [cyclesState])
 
   return (
     <CyclesContext.Provider
