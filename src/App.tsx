@@ -5,7 +5,7 @@ import { BrowserRouter } from 'react-router-dom'
 import { defaultTheme } from './styles/theme/default'
 import { Analytics } from '@vercel/analytics/react'
 
-import { CyclesContextProvider } from './contexts/CyclesContext'
+import { CyclesContextProvider } from './contexts/cycles'
 
 import Router from './routes'
 
