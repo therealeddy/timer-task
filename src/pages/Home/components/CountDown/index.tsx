@@ -31,7 +31,7 @@ const CountDown: React.FC = () => {
   }, [activeCycle, minutes, seconds])
 
   useEffect(() => {
-    let interval: number
+    let interval: ReturnType<typeof setInterval>
 
     if (activeCycle) {
       interval = setInterval(() => {
