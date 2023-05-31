@@ -6,6 +6,7 @@ import useCyclesReducer from '../reducers/cycles/reducer'
 import {
   addNewCycleAction,
   interruptedCurrentCycleAction,
+  markCurrentCycleAsFinishedAction,
 } from '../reducers/cycles/actions'
 
 import { Cycle } from '../reducers/cycles/types'
@@ -57,7 +58,7 @@ export function CyclesContextProvider({
   }
 
   function markCurrentCycleAsFinished() {
-    dispatch(markCurrentCycleAsFinished())
+    dispatch(markCurrentCycleAsFinishedAction())
   }
 
   function createNewCycle(data: CreateCycleData) {
