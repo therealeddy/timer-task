@@ -1,12 +1,11 @@
 import { ThemeProvider } from 'styled-components'
-
-import { GlobalStyle } from './styles/global'
 import { BrowserRouter } from 'react-router-dom'
-import { defaultTheme } from './styles/theme/default'
 import { Analytics } from '@vercel/analytics/react'
 
-import { CyclesContextProvider } from './contexts/cycles'
+import { GlobalStyle } from './styles/global'
+import { defaultTheme } from './styles/theme/default'
 
+import { CyclesContextProvider } from './store/contexts/cycles'
 import Router from './routes'
 
 function App() {

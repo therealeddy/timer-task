@@ -2,7 +2,7 @@ import React, { useContext, useEffect } from 'react'
 import { differenceInSeconds } from 'date-fns'
 
 import { setDocumentTitle } from '../../../../utils/documentTitle'
-import { CyclesContext } from '../../../../contexts/cycles'
+import { CyclesContext } from '../../../../store/contexts/cycles'
 
 import { CountDownContainer, Separetor } from './styles'
 

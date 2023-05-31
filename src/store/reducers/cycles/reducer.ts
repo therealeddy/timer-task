@@ -1,22 +1,11 @@
+import { useReducer } from 'react'
 import { produce } from 'immer'
 
-import { ActionTypes } from './actions'
+import { ActionTypes, CyclesState } from './types'
 
-export interface Cycle {
-  id: string
-  task: string
-  minutesAmount: number
-  startDate: Date
-  interruptedDate?: Date
-  finishedDate?: Date
-}
+import { readLocalStorage } from '../../../utils/localStorage'
 
-interface CyclesState {
-  cycles: Cycle[]
-  activeCycleId: string | null
-}
-
-export function cyclesReducer(state: CyclesState, action: any) {
+function cyclesReducer(state: CyclesState, action: any) {
   switch (action.type) {
     case ActionTypes.ADD_NEW_CYCLE: {
       return produce(state, (draft) => {
@@ -57,3 +46,23 @@ export function cyclesReducer(state: CyclesState, action: any) {
     }
   }
 }
+
+function useCyclesReducer() {
+  const [cyclesState, dispatch] = useReducer(
+    cyclesReducer,
+    {
+      cycles: [],
+      activeCycleId: null,
+    },
+    (initialState) => {
+      return readLocalStorage('cycles-state') || initialState
+    },
+  )
+
+  return {
+    cyclesState,
+    dispatch,
+  }
+}
+
+export default useCyclesReducer

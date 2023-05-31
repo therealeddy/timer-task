@@ -1,11 +1,17 @@
-import React, { createContext, useEffect, useReducer, useState } from 'react'
-import { setDocumentTitle } from '../utils/documentTitle'
-import { Cycle, cyclesReducer } from '../reducers/cycles/reducer'
+import React, { createContext, useEffect, useState } from 'react'
+import { differenceInSeconds } from 'date-fns'
+
+import useCyclesReducer from '../reducers/cycles/reducer'
+
 import {
   addNewCycleAction,
   interruptedCurrentCycleAction,
 } from '../reducers/cycles/actions'
-import { differenceInSeconds } from 'date-fns'
+
+import { Cycle } from '../reducers/cycles/types'
+
+import { writeLocalStorage } from '../../utils/localStorage'
+import { setDocumentTitle } from '../../utils/documentTitle'
 
 interface CreateCycleData {
   task: string
@@ -18,9 +24,9 @@ interface CyclesContextType {
   activeCycleId: string | null
   amountSecondsPasses: number
   markCurrentCycleAsFinished: () => void
-  setSecondsPassed: (seconds: number) => void
   createNewCycle: (data: CreateCycleData) => void
   interruptCurrentCycle: () => void
+  setSecondsPassed: (seconds: number) => void
 }
 
 export const CyclesContext = createContext({} as CyclesContextType)
@@ -32,24 +38,7 @@ interface CyclesContextProviderProps {
 export function CyclesContextProvider({
   children,
 }: CyclesContextProviderProps) {
-  const [cyclesState, dispatch] = useReducer(
-    cyclesReducer,
-    {
-      cycles: [],
-      activeCycleId: null,
-    },
-    (initialState) => {
-      const storedStateAsJSON = localStorage.getItem(
-        '@timer-task:cycles-state-1.0.0',
-      )
-
-      if (storedStateAsJSON) {
-        return JSON.parse(storedStateAsJSON)
-      }
-
-      return initialState
-    },
-  )
+  const { cyclesState, dispatch } = useCyclesReducer()
 
   const { cycles, activeCycleId } = cyclesState
 
@@ -85,14 +74,11 @@ export function CyclesContextProvider({
 
   function interruptCurrentCycle() {
     setDocumentTitle('', true)
-
     dispatch(interruptedCurrentCycleAction())
   }
 
   useEffect(() => {
-    const stateJSON = JSON.stringify(cyclesState)
-
-    localStorage.setItem('@timer-task:cycles-state-1.0.0', stateJSON)
+    writeLocalStorage('cycles-state', cyclesState)
   }, [cyclesState])
 
   return (
